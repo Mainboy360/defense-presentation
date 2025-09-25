@@ -4,24 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incident Reporting App</title>
+  <link rel="stylesheet" href="styles.css">
   
 </head>
 <body>
-  <h1>Report an Incident</h1>
-  <form id="incidentForm">
-    <label for="description">Description:</label><br>
-    <textarea id="description" name="description" required></textarea><br><br>
+      <div class="navigation-container">
+        <div class="rsu-logo-n-description">
+          <img src="images/AU+REC+logos+-+2022-03-31T094801.834.png" alt="">
+          <div class="descriptions">
+            <h2>Rivers State University</h2>
+            <p>Security Incident Reporting </p>
+          </div>
+        </div>
+    </div>
+    <div class="form-container">
+      <form id="incidentForm">
+        <label for="description">
+          <textarea id="description" name="description" placeholder="Tell us what happened today!" required></textarea>
+        </label>
+        <label for="isUrgent">
+          <input type="checkbox" id="isUrgent" name="isUrgent"> Make report anonymous
+        </label>
+        <label for="file">Upload evidence
+          <input type="file" id="file" name="file">
+        </label>
 
-    <label for="isUrgent">Is this urgent?</label>
-    <input type="checkbox" id="isUrgent" name="isUrgent"><br><br>
+        <button type="submit">Submit</button>
+          <div id="response"></div>
+     </form>
+    </div>
 
-    <label for="file">Attach File:</label>
-    <input type="file" id="file" name="file"><br><br>
 
-    <button type="submit">Submit</button>
-  </form>
 
-  <div id="response"></div>
   
 
   <script src="script.js"></script>

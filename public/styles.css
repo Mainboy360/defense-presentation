@@ -2,3 +2,75 @@
     padding: 0px;
     margin: 0px;
 }
+
+
+  body {
+    background-image: url("images/global-155461_12802.png");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+   }
+
+
+
+.navigation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 10px 10px 5px;
+}
+
+img[src*="png"] {
+    width: 100px;
+    height: 100%;
+}
+
+.rsu-logo-n-description {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+.descriptions {
+    text-align: center;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 50px;
+    padding: 40px 100px 40px 100px;
+}
+
+textarea {
+    width: 60vw;
+    height: 200px;
+    text-align: left;
+    padding: 20px;
+}
+
+button[type="submit"] {
+    padding: 10px;
+    border: 1px solid silver;
+}
+
+button[type="submit"]:hover {
+    background-color: yellow;
+    color: black;
+}
+
+#response {
+    color: green;
+    text-align: center;
+}
