@@ -1,80 +1,34 @@
-
-/*
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const path = require('path');
-const bodyParser = require('body-parser');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
-// Define Incident Schema
-const incidentSchema = new mongoose.Schema({
-  description: { type: String, required: true },
-  isUrgent: { type: Boolean, default: false },
-  filePath: { type: String }  // Path to uploaded file
-});
-
-const Incident = mongoose.model('Incident', incidentSchema);
-
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static('public'));  // Serve frontend files
-app.use('/uploads', express.static('uploads'));  // Serve uploaded files if needed
-
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));  // Unique filename
-  }
-});
-const upload = multer({ storage });
-
-// Route for form submission
-app.post('/submit-incident', upload.single('file'), async (req, res) => {
-  try {
-    const { description, isUrgent } = req.body;
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const newIncident = new Incident({
-      description,
-      isUrgent: isUrgent === 'on',  // Checkbox sends 'on' if checked
-      filePath
-    });
-
-    await newIncident.save();
-    res.status(200).send('Incident reported successfully!');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error reporting incident');
-  }
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-
-
 document.getElementById('incidentForm').addEventListener('submit', async (e) => {
-  e.preventDefault();  // Prevent default form submission
+  e.preventDefault();
+
+  const message = document.getElementById('message').value;
+  const isAnonymous = document.getElementById('isAnonymous').checked ? 'on' : 'off';
+  const fileInput = document.getElementById('files');
+  const files = fileInput.files;
+
+  // Client-side file validation
+  const allowedTypes = ['image/png', 'image/jpeg', 'video/mp4', 'video/webm', 'video/ogg'];
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  for (let i = 0; i < files.length; i++) {
+    if (!allowedTypes.includes(files[i].type)) {
+      document.getElementById('response').innerText = `Error: ${files[i].name} is not a supported file type (PNG, JPG, JPEG, MP4, WEBM, OGG).`;
+      return;
+    }
+    if (files[i].size > maxSize) {
+      document.getElementById('response').innerText = `Error: ${files[i].name} exceeds 10MB limit.`;
+      return;
+    }
+  }
+
+  console.log('Form data:', { message, isAnonymous, files: files.length });
 
   const formData = new FormData();
-  formData.append('description', document.getElementById('description').value);
-  formData.append('isUrgent', document.getElementById('isUrgent').checked ? 'on' : 'off');
-  formData.append('file', document.getElementById('file').files[0]);
+  formData.append('message', message);
+  formData.append('isAnonymous', isAnonymous);
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+  console.log('Sending FormData...');
 
   try {
     const response = await fetch('/submit-incident', {
@@ -83,69 +37,43 @@ document.getElementById('incidentForm').addEventListener('submit', async (e) => 
     });
 
     const result = await response.text();
-    document.getElementById('response').innerText = result;
-  } catch (err) {
-    console.error(err);
-    document.getElementById('response').innerText = 'Error submitting form';
-  }
-});
-
-document.getElementById('incidentForm').addEventListener('submit', async (e) => {
-  e.preventDefault(); // Prevent default form submission
-
-  const fileInput = document.getElementById('file');
-  const file = fileInput.files[0];
-  console.log('File selected:', file); // Log file details or undefined
-
-  const formData = new FormData();
-  formData.append('description', document.getElementById('description').value);
-  formData.append('isUrgent', document.getElementById('isUrgent').checked ? 'on' : 'off');
-  formData.append('file', file);
-  console.log('Sending FormData...'); // Log before sending
-
-  try {
-    const response = await fetch('/submit-incident', {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.text();
-    console.log('Server response:', result); // Log response
-    document.getElementById('response').innerText = result;
+    console.log('Server response:', result);
+    document.getElementById('response').innerText = result.includes('Error') ? result : 'Success: ' + result;
+    document.getElementById('incidentForm').reset();
+    loadReports();
   } catch (err) {
     console.error('Fetch error:', err);
     document.getElementById('response').innerText = 'Error submitting form';
   }
 });
 
-*/
-
-document.getElementById('incidentForm').addEventListener('submit', async (e) => {
-  e.preventDefault(); // Prevent default form submission
-
-  const fileInput = document.getElementById('file');
-  const file = fileInput.files[0];
-  console.log('File selected:', file); // Log file details or undefined
-
-  const formData = new FormData();
-  formData.append('description', document.getElementById('description').value);
-  formData.append('isUrgent', document.getElementById('isUrgent').checked ? 'on' : 'off');
-  formData.append('file', file);
-  console.log('Sending FormData...'); // Log before sending
-
+// Load and display reports
+async function loadReports() {
   try {
-    const response = await fetch('/submit-incident', {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.text();
-    console.log('Server response:', result); // Log response
-    document.getElementById('response').innerText = result;
+    const response = await fetch('/reports');
+    const incidents = await response.json();
+    const reportList = document.getElementById('reportList');
+    reportList.innerHTML = incidents.map(incident => `
+      <div class="report-card">
+        <p><strong>Description:</strong> ${incident.message}</p>
+        <p><strong>Anonymous:</strong> ${incident.isAnonymous ? 'Yes' : 'No'}</p>
+        <p><strong>Files:</strong> 
+          ${incident.fileUrls && incident.fileUrls.length 
+            ? incident.fileUrls.map(url => `
+                <a href="${url}" target="_blank">View File</a><br>
+                ${url.match(/\.(png|jpg|jpeg)$/i) 
+                  ? `<img src="${url}" alt="Incident Image" style="max-width: 200px; height: auto; margin-top: 10px;">`
+                  : url.match(/\.(mp4|webm|ogg)$/i) 
+                    ? `<video src="${url}" controls style="max-width: 200px; height: auto; margin-top: 10px;"></video>`
+                    : 'Unsupported file type'}
+              `).join('')
+            : 'No files attached'}
+        </p>
+      </div>
+    `).join('');
   } catch (err) {
-    console.error('Fetch error:', err);
-    document.getElementById('response').innerText = 'Error submitting form';
+    console.error('Error loading reports:', err);
+    document.getElementById('reportList').innerText = 'Error loading reports';
   }
-});
-
-document.getElementById('response').innerText = result.includes('Error') ? result : 'Success: ' + result;
+}
+loadReports();

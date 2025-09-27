@@ -4,11 +4,13 @@
 }
 
 
-  body {
+  .k {
     background-image: url("images/global-155461_12802.png");
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
    }
 
 
@@ -20,7 +22,7 @@
     padding: 50px 10px 10px 5px;
 }
 
-img[src*="png"] {
+img[src*=".png"] {
     width: 100px;
     height: 100%;
 }
@@ -30,10 +32,8 @@ img[src*="png"] {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
-}
-.descriptions {
     text-align: center;
+
 }
 
 
@@ -66,11 +66,21 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: yellow;
-    color: black;
+    background-color: green;
+    color: white;
 }
 
 #response {
     color: green;
     text-align: center;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 50px;
+    gap: 50px;
+    padding: 50px;
 }

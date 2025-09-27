@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Incident</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="images/favicon.ico.png" type="image/x-icon">
+</head>
+<body>
+    <div class="k">
+        <div class="navigation-container">
+            <div class="rsu-logo-n-description">
+            <img src="./images/AU+REC+logos+-+2022-03-31T094801.834.png" alt="Rivers State University Logo">
+            <div class="description">
+                <h2>Rivers State University</h2>
+                <p>Security Incident Reporting</p>
+            </div>
+            </div>
+        </div> 
+        <div class="form-container">
+            <form id="incidentForm">
+                <textarea name="message" id="message" placeholder="Tell us what happened today..." required></textarea>
+                <label for="files">
+                    Upload evidence (images or videos) <input type="file" name="files" id="files" multiple accept=".png,.jpg,.jpeg,.mp4,.webm,.ogg">
+                </label>
+                <label for="isAnonymous">
+                    <input type="checkbox" name="isAnonymous" id="isAnonymous" checked> Make report anonymous 
+                </label>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div id="response"></div>
+    <div class="center">
+        <h2>Submitted Reports</h2>
+        <div id="reportList"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
